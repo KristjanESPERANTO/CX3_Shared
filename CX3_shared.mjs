@@ -17,7 +17,7 @@ const magicPool = new Map()
  * @returns string black or white
  */
 const getContrastYIQ = (rgba) => {
-  let [r, g, b] = rgba.match(/^rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*(\d+\.{0,1}\d*))?\)$/).slice(1)
+  const [r, g, b] = rgba.match(/^rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*(\d+\.{0,1}\d*))?\)$/).slice(1)
 
   var yiq = ((r*299)+(g*587)+(b*114))/1000;
   return (yiq >= 128) ? 'black' : 'white';
@@ -68,8 +68,8 @@ const ensureString = (value) => {
  * @returns array filtered events
  */
 const calendarFilter = (events = [], calendarSet = []) => {
-  let result = []
-  for (let ev of events) {
+  const result = []
+  for (const ev of events) {
     if (calendarSet.length === 0 || calendarSet.includes(ev.calendarName)) {
       ev.calendarSeq = calendarSet.findIndex((name) => name === ev.calendarName) + 1
       ev.duration = +ev.endDate - +ev.startDate
@@ -90,11 +90,11 @@ const addEventsToPool = ({ eventPool, sender, payload }) => {
  * @returns array of events
  */
 const regularizeEvents = ({ eventPool, config }) => {
-  let calendarSet = (Array.isArray(config.calendarSet)) ? [ ...config.calendarSet ] : []
+  const calendarSet = (Array.isArray(config.calendarSet)) ? [ ...config.calendarSet ] : []
 
   let temp = []
 
-  for (let eventArrays of eventPool.values()) {
+  for (const eventArrays of eventPool.values()) {
     temp = [...temp, ...(calendarFilter(eventArrays, calendarSet))]
   }
 
@@ -138,7 +138,7 @@ const regularizeEvents = ({ eventPool, config }) => {
  * @returns HTMLElement event DOM
  */
 const renderEventDefault = (event) => {
-  let e = document.createElement('div')
+  const e = document.createElement('div')
   e.classList.add('event')
   event.calendarName ? e.classList.add('calendar_' + encodeURI(event.calendarName)) : null
   if (event?.class) e.classList.add(event.class)
@@ -177,17 +177,17 @@ const renderSymbol = (e, event, options) => {
   const iconifyPattern = /^\S+:\S+$/
   if (useSymbol && Array.isArray(event.symbol) && event.symbol.length > 0) {
     event.symbol.forEach((symbol) => {
-      let exDom = document.createElement('span')
+      const exDom = document.createElement('span')
       exDom.classList.add('symbol')
       if (symbol) {
         const iconify = symbol.match(iconifyPattern)?.[0]
         if (iconify && useIconify) {
-          let iconifyDom = document.createElement('iconify-icon')
+          const iconifyDom = document.createElement('iconify-icon')
           iconifyDom.icon = iconify
           iconifyDom.inline = true
           exDom.appendChild(iconifyDom)
         } else { // fontawesome
-          let faDom = document.createElement('span')
+          const faDom = document.createElement('span')
           faDom.className = symbol
           exDom.appendChild(faDom)
         }
@@ -198,7 +198,7 @@ const renderSymbol = (e, event, options) => {
       e.appendChild(exDom)
     })
   } else {
-    let exDom = document.createElement('span')
+    const exDom = document.createElement('span')
     exDom.classList.add('noSymbol', 'symbol')
     e.appendChild(exDom)
   }
@@ -210,10 +210,10 @@ const renderSymbol = (e, event, options) => {
  * @returns HTMLElement event DOM
  */
 const renderEvent = (event, options) => {
-  let e = renderEventDefault(event)
+  const e = renderEventDefault(event)
   renderSymbol(e, event, options)
 
-  let t = document.createElement('span')
+  const t = document.createElement('span')
   t.classList.add('title', 'eventTitle')
   t.innerHTML = event.title
   e.appendChild(t)
@@ -227,25 +227,25 @@ const renderEvent = (event, options) => {
  * @returns
  */
 const renderEventJournal = (event, { useSymbol, eventTimeOptions, eventDateOptions, locale, useIconify }) => {
-  let e = renderEventDefault(event)
+  const e = renderEventDefault(event)
 
-  let headline = document.createElement('div')
+  const headline = document.createElement('div')
   headline.classList.add('headline')
   renderSymbol(headline, event, { useSymbol, useIconify })
 
-  let title = document.createElement('div')
+  const title = document.createElement('div')
   title.classList.add('title')
   title.innerHTML = event.title
   headline.appendChild(title)
   e.appendChild(headline)
 
 
-  let time = document.createElement('div')
+  const time = document.createElement('div')
   time.classList.add('period')
 
-  let period = document.createElement('div')
-  let st = new Date(+event.startDate)
-  let et = new Date(+event.endDate)
+  const period = document.createElement('div')
+  const st = new Date(+event.startDate)
+  const et = new Date(+event.endDate)
   const inday = (et.getDate() === st.getDate() && et.getMonth() === st.getMonth() && et.getFullYear() === st.getFullYear())
   period.classList.add('time', (inday) ? 'inDay' : 'notInDay')
   period.innerHTML = new Intl.DateTimeFormat(locale, (inday) ? eventTimeOptions : { ...eventDateOptions, ...eventTimeOptions }).formatRangeToParts(st, et)
@@ -256,11 +256,11 @@ const renderEventJournal = (event, { useSymbol, eventTimeOptions, eventDateOptio
   e.appendChild(period)
 
 
-  let description = document.createElement('div')
+  const description = document.createElement('div')
   description.classList.add('description')
   description.innerHTML = ensureString(event.description)
   e.appendChild(description)
-  let location = document.createElement('div')
+  const location = document.createElement('div')
   location.classList.add('location')
   location.innerHTML = ensureString(event.location)
   e.appendChild(location)
@@ -276,17 +276,17 @@ const renderEventJournal = (event, { useSymbol, eventTimeOptions, eventDateOptio
  * @returns HTMLElement event DOM
  */
 const renderEventAgenda = (event, {useSymbol, eventTimeOptions, locale, useIconify}, tm = new Date())=> {
-  let e = renderEventDefault(event)
+  const e = renderEventDefault(event)
 
-  let headline = document.createElement('div')
+  const headline = document.createElement('div')
   headline.classList.add('headline')
   renderSymbol(headline, event, { useSymbol, useIconify })
 
-  let time = document.createElement('div')
+  const time = document.createElement('div')
   time.classList.add('period')
 
-  let startTime = document.createElement('div')
-  let st = new Date(+event.startDate)
+  const startTime = document.createElement('div')
+  const st = new Date(+event.startDate)
   startTime.classList.add('time', 'startTime', (st.getDate() === tm.getDate()) ? 'inDay' : 'notInDay')
   startTime.innerHTML = new Intl.DateTimeFormat(locale, eventTimeOptions).formatToParts(st).reduce((prev, cur, curIndex) => {
     prev = prev + `<span class="eventTimeParts ${cur.type} seq_${curIndex}">${cur.value}</span>`
@@ -294,8 +294,8 @@ const renderEventAgenda = (event, {useSymbol, eventTimeOptions, locale, useIconi
   }, '')
   headline.appendChild(startTime)
 
-  let endTime = document.createElement('div')
-  let et = new Date(+event.endDate)
+  const endTime = document.createElement('div')
+  const et = new Date(+event.endDate)
   endTime.classList.add('time', 'endTime', (et.getDate() === tm.getDate()) ? 'inDay' : 'notInDay')
   endTime.innerHTML = new Intl.DateTimeFormat(locale, eventTimeOptions).formatToParts(et).reduce((prev, cur, curIndex) => {
     prev = prev + `<span class="eventTimeParts ${cur.type} seq_${curIndex}">${cur.value}</span>`
@@ -303,16 +303,16 @@ const renderEventAgenda = (event, {useSymbol, eventTimeOptions, locale, useIconi
   }, '')
   headline.appendChild(endTime)
 
-  let title = document.createElement('div')
+  const title = document.createElement('div')
   title.classList.add('title')
   title.innerHTML = event.title
   headline.appendChild(title)
   e.appendChild(headline)
-  let description = document.createElement('div')
+  const description = document.createElement('div')
   description.classList.add('description')
   description.innerHTML = ensureString(event.description)
   e.appendChild(description)
-  let location = document.createElement('div')
+  const location = document.createElement('div')
   location.classList.add('location')
   location.innerHTML = ensureString(event.location)
   e.appendChild(location)
@@ -329,9 +329,9 @@ const oppositeMagic = (e, original) => {
   if (magicPool.has(original.color)) {
     original.oppositeColor = magicPool.get(original.color)
   } else {
-    let magic = prepareMagic()
+    const magic = prepareMagic()
     magic.style.color = original.color
-    let oppositeColor = getContrastYIQ(window.getComputedStyle(magic).getPropertyValue('color'))
+    const oppositeColor = getContrastYIQ(window.getComputedStyle(magic).getPropertyValue('color'))
     original.oppositeColor = oppositeColor;
   }
   e.style.setProperty('--oppositeColor', original.oppositeColor)
@@ -364,13 +364,13 @@ const formatEvents = ({ original, config }) => {
     ev.isFuture = isFuture(ev)
     ev.isFullday = ev.fullDayEvent
     if (ev.isFullday) {
-      let gap = +ev.endDate - +ev.startDate
+      const gap = +ev.endDate - +ev.startDate
       if (gap % (1000 * 60 * 60 * 24) === 0) {
         ev.startDate = new Date(+ev.startDate).setHours(0, 0, 0, 0)
         ev.endDate = new Date(+ev.startDate + gap).valueOf()
       }
     }
-    let et = new Date(+ev.endDate)
+    const et = new Date(+ev.endDate)
     if (et.getHours() === 0 && et.getMinutes() === 0 && et.getSeconds() === 0 && et.getMilliseconds() === 0) ev.endDate = ev.endDate - 1
     ev.isMultiday = isMultiday(ev)
     ev.today = thisMoment.toISOString().split('T')[ 0 ] === new Date(+ev.startDate).toISOString().split('T')[ 0 ]
@@ -392,7 +392,7 @@ const formatEvents = ({ original, config }) => {
     events = events.toSorted(config.eventSorter)
   }
 
-  for (let ev of events) {
+  for (const ev of events) {
     if (config.skipDuplicated && duplicateSet.has(ev.hash)) {
       ev.skip = true
       ev.duplicated = true
@@ -409,7 +409,7 @@ const formatEvents = ({ original, config }) => {
  * @returns array of events
  */
 const prepareEvents = ({ targetEvents, config, range }) => {
-  let events = targetEvents.filter((evs) => {
+  const events = targetEvents.filter((evs) => {
     return !(evs.endDate <= range[0] || evs.startDate >= range[1])
   })
 
@@ -423,14 +423,14 @@ const prepareEvents = ({ targetEvents, config, range }) => {
  */
 // TO_CHECK : Should it be deprecated??
 const eventsByDate = ({ targetEvents, config, startTime, dayCounts }) => {
-  let events = formatEvents({ original: targetEvents, config })
-  let ebd = events.reduce((days, ev) => {
+  const events = formatEvents({ original: targetEvents, config })
+  const ebd = events.reduce((days, ev) => {
     if (ev.endDate < startTime) return days
-    let st = new Date(+ev.startDate)
-    let et = new Date(+ev.endDate)
+    const st = new Date(+ev.startDate)
+    const et = new Date(+ev.endDate)
 
     while(st.getTime() <= et.getTime()) {
-      let day = new Date(st.getFullYear(), st.getMonth(), st.getDate(), 0, 0, 0, 0).getTime()
+      const day = new Date(st.getFullYear(), st.getMonth(), st.getDate(), 0, 0, 0, 0).getTime()
       if (!days.has(day)) days.set(day, [])
       days.get(day).push(ev)
       st.setDate(st.getDate() + 1)
@@ -438,9 +438,9 @@ const eventsByDate = ({ targetEvents, config, startTime, dayCounts }) => {
     return days
   }, new Map())
 
-  let startDay = new Date(+startTime).setHours(0, 0, 0, 0)
-  let days = Array.from(ebd.keys()).sort()
-  let position = days.findIndex((d) => d >= startDay)
+  const startDay = new Date(+startTime).setHours(0, 0, 0, 0)
+  const days = Array.from(ebd.keys()).sort()
+  const position = days.findIndex((d) => d >= startDay)
 
   return days.slice(position, position + dayCounts).map((d) => {
     return {
@@ -470,7 +470,7 @@ const prepareMagic = () => {
 const prepareIconify = () => {
   // if iconify is not loaded, load it.
   if (!window.customElements.get('iconify-icon') && !document.getElementById('iconify')) {
-    let iconify = document.createElement('script')
+    const iconify = document.createElement('script')
     iconify.id = 'iconify'
     iconify.src = ICONIFY_URL
     document.head.appendChild(iconify)
@@ -492,10 +492,10 @@ const initModule = (m, language) => {
  * @param {object} options
  */
 const displayLegend = (dom, events, options = {}) => {
-  let lDom = document.createElement('div')
+  const lDom = document.createElement('div')
   lDom.classList.add('legends')
-  let legendData = new Map()
-  for (let ev of events) {
+  const legendData = new Map()
+  for (const ev of events) {
     if (!legendData.has(ev.calendarName)) legendData.set(ev.calendarName, {
       name: ev.calendarName,
       color: ev.color ?? null,
@@ -503,11 +503,11 @@ const displayLegend = (dom, events, options = {}) => {
       symbol: ev.symbol ?? []
     })
   }
-  for (let l of legendData.values()) {
-    let ld = document.createElement('div')
+  for (const l of legendData.values()) {
+    const ld = document.createElement('div')
     ld.classList.add('legend')
     renderSymbol(ld, l, options)
-    let t = document.createElement('span')
+    const t = document.createElement('span')
     t.classList.add('title')
     t.innerHTML = l.name
     ld.appendChild(t)
@@ -524,9 +524,9 @@ const displayLegend = (dom, events, options = {}) => {
  * @returns boolean true if the given date is today
  */
 const isToday = (d) => {
-  let tm = new Date()
-  let start = (new Date(tm.getTime())).setHours(0, 0, 0, 0)
-  let end = (new Date(tm.getTime())).setHours(23, 59, 59, 999)
+  const tm = new Date()
+  const start = (new Date(tm.getTime())).setHours(0, 0, 0, 0)
+  const end = (new Date(tm.getTime())).setHours(23, 59, 59, 999)
   return (d.getTime() >= start && d.getTime() <= end)
 }
 
@@ -536,8 +536,8 @@ const isToday = (d) => {
  * @returns boolean true if the given date is before today
  */
 const isPastDay = (d) => {
-  let tm = new Date()
-  let start = (new Date(tm.getTime())).setHours(0, 0, 0, 0)
+  const tm = new Date()
+  const start = (new Date(tm.getTime())).setHours(0, 0, 0, 0)
   return d.getTime() < start
 }
 
@@ -547,8 +547,8 @@ const isPastDay = (d) => {
  * @returns boolean true if the given date is after today
  */
 const isFutureDay = (d) => {
-  let tm = new Date()
-  let end = (new Date(tm.getTime())).setHours(23, 59, 59, 999)
+  const tm = new Date()
+  const end = (new Date(tm.getTime())).setHours(23, 59, 59, 999)
   return d.getTime() > end
 }
 
@@ -558,9 +558,9 @@ const isFutureDay = (d) => {
  * @returns boolean true if the given date is this month
  */
 const isThisMonth = (d) => {
-  let tm = new Date()
-  let start = new Date(tm.getFullYear(), tm.getMonth(), 1)
-  let end = new Date(start.getFullYear(), start.getMonth() + 1, 0, 23, 59, 59, 999)
+  const tm = new Date()
+  const start = new Date(tm.getFullYear(), tm.getMonth(), 1)
+  const end = new Date(start.getFullYear(), start.getMonth() + 1, 0, 23, 59, 59, 999)
   return (d.getTime() >= start && d.getTime() <= end)
 }
 
@@ -570,9 +570,9 @@ const isThisMonth = (d) => {
  * @returns boolean true if the given date is this year
  */
 const isThisYear = (d) => {
-  let tm = new Date()
-  let start = new Date(tm.getFullYear(), 1, 1)
-  let end = new Date(tm.getFullYear(), 11, 31, 23, 59, 59, 999)
+  const tm = new Date()
+  const start = new Date(tm.getFullYear(), 1, 1)
+  const end = new Date(tm.getFullYear(), 11, 31, 23, 59, 59, 999)
   return (d.getTime() >= start && d.getTime() <= end)
 }
 
@@ -603,7 +603,7 @@ const getBeginOfWeek = (d, options) => {
  * @returns Date end of week
  */
 const getEndOfWeek = (d, options) => {
-  let b = getBeginOfWeek(d, options)
+  const b = getBeginOfWeek(d, options)
   return new Date(b.getFullYear(), b.getMonth(), b.getDate() + 6, 23, 59, 59, 999)
 }
 
@@ -614,13 +614,13 @@ const getEndOfWeek = (d, options) => {
  * @returns integer week number of the year
  */
 const getWeekNo = (d, options) => {
-  let bow = getBeginOfWeek(d, options)
+  const bow = getBeginOfWeek(d, options)
   let fw = getBeginOfWeek(new Date(d.getFullYear(), 0, options.minimalDaysOfNewYear), options)
-  let nfw = getBeginOfWeek(new Date(d.getFullYear() + 1, 0, options.minimalDaysOfNewYear), options)
+  const nfw = getBeginOfWeek(new Date(d.getFullYear() + 1, 0, options.minimalDaysOfNewYear), options)
   if (bow.getTime() < fw.getTime()) fw = getBeginOfWeek(new Date(d.getFullYear() - 1, 0, options.minimalDayosOfNewYear), options)
   let count = 1
   if (bow.getTime() === nfw.getTime()) return count
-  let t = new Date(fw.getTime())
+  const t = new Date(fw.getTime())
   while (bow.getTime() > t.getTime()) {
     t.setDate(t.getDate() + 7)
     count++;
@@ -652,7 +652,7 @@ const isFuture = (ev) => {
  * @returns boolean true if the event is current
  */
 const isCurrent = (ev) => {
-  let tm = Date.now()
+  const tm = Date.now()
   return (ev.endDate >= tm && ev.startDate <= tm)
 }
 
@@ -662,8 +662,8 @@ const isCurrent = (ev) => {
  * @returns boolean true if the event is multiday
  */
 const isMultiday = (ev) => {
-  let s = new Date(+ev.startDate)
-  let e = new Date(+ev.endDate)
+  const s = new Date(+ev.startDate)
+  const e = new Date(+ev.endDate)
   return ((s.getDate() !== e.getDate())
     || (s.getMonth() !== e.getMonth())
     || (s.getFullYear() !== e.getFullYear()))
@@ -697,16 +697,16 @@ const gapFromToday = (d) => {
  */
 const makeWeatherDOM = (parentDom, forecasted) => {
   if (forecasted && forecasted?.weatherType) {
-    let weatherDom = document.createElement('div')
+    const weatherDom = document.createElement('div')
     weatherDom.classList.add('cellWeather')
-    let icon = document.createElement('span')
+    const icon = document.createElement('span')
     icon.classList.add('wi', 'wi-' + forecasted.weatherType)
     weatherDom.appendChild(icon)
-    let maxTemp = document.createElement('span')
+    const maxTemp = document.createElement('span')
     maxTemp.classList.add('maxTemp', 'temperature')
     maxTemp.innerHTML = Math.round(forecasted.maxTemperature)
     weatherDom.appendChild(maxTemp)
-    let minTemp = document.createElement('span')
+    const minTemp = document.createElement('span')
     minTemp.classList.add('minTemp', 'temperature')
     minTemp.innerHTML = Math.round(forecasted.minTemperature)
     weatherDom.appendChild(minTemp)
