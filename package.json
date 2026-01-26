@@ -4,7 +4,9 @@
   "description": "CX3 Shared library",
   "main": "CX3_Shared.mjs",
   "scripts": {
-    "test": "node --run lint",
+    "test": "node --test && node --run lint",
+    "test:unit": "node --test",
+    "test:watch": "node --test --watch",
     "lint": "eslint",
     "lint:fix": "eslint --fix"
   },
