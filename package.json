@@ -4,6 +4,7 @@
   "description": "CX3 Shared library",
   "main": "CX3_Shared.mjs",
   "scripts": {
+    "release": "commit-and-tag-version --commit-all --config ./changelog.config.js",
     "test": "node --test && node --run lint",
     "test:unit": "node --test",
     "test:watch": "node --test --watch",
@@ -22,6 +23,7 @@
   "homepage": "https://github.com/MMRIZE/CX3_Shared#readme",
   "devDependencies": {
     "@eslint/js": "^9.39.2",
+    "commit-and-tag-version": "^12.6.1",
     "eslint": "^9.39.2",
     "globals": "^17.1.0"
   }
