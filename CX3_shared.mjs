@@ -175,12 +175,17 @@ const renderEventDefault = (event) => {
 const renderSymbol = (e, event, options) => {
   const { useSymbol, useIconify } = options
   const iconifyPattern = /^\S+:\S+$/
+  const iconifyAltPattern = /^\S+--\S+$/
   if (useSymbol && Array.isArray(event.symbol) && event.symbol.length > 0) {
     event.symbol.forEach((symbol) => {
       const exDom = document.createElement('span')
       exDom.classList.add('symbol')
       if (symbol) {
-        const iconify = symbol.match(iconifyPattern)?.[0]
+        let iconify = symbol.match(iconifyPattern)?.[0]
+        // Support alternative pattern: 'prefix--icon-name' → 'prefix:icon-name'
+        if (!iconify && symbol.match(iconifyAltPattern)) {
+          iconify = symbol.replace('--', ':')
+        }
         if (iconify && useIconify) {
           const iconifyDom = document.createElement('iconify-icon')
           iconifyDom.icon = iconify
