@@ -373,7 +373,7 @@ const formatEvents = ({ original, config }) => {
     const et = new Date(+ev.endDate)
     if (et.getHours() === 0 && et.getMinutes() === 0 && et.getSeconds() === 0 && et.getMilliseconds() === 0) ev.endDate = ev.endDate - 1
     ev.isMultiday = isMultiday(ev)
-    ev.today = thisMoment.toISOString().split('T')[ 0 ] === new Date(+ev.startDate).toISOString().split('T')[ 0 ]
+    ev.today = thisMoment.toLocaleDateString("en-CA") === new Date(+ev.startDate).toLocaleDateString("en-CA")
     ev.hash = simpleHash(ev.title + ev.startDate + ev.endDate)
     return ev
   }).toSorted((a, b) => {
