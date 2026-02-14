@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [1.1.1](https://github.com/MMRIZE/CX3_Shared/compare/v1.1.0...v1.1.1) (2026-02-14)
+
+
+### Code Refactoring
+
+* **shared:** modernize addEventsToPool cloning ([c7e9abd](https://github.com/MMRIZE/CX3_Shared/commit/c7e9abd17bf9f1deacf1839ced2d08969f333ea6))
+
+
+### Tests
+
+* make timezone tests work in any timezone environment ([ed204b4](https://github.com/MMRIZE/CX3_Shared/commit/ed204b4c92de226df1e52d1ce958cbd803eaebda))
+
 ## 1.1.0 (2026-01-26)
 
 
