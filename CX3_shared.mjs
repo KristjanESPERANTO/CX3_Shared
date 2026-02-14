@@ -79,9 +79,9 @@ const calendarFilter = (events = [], calendarSet = []) => {
   return result
 }
 
-/* Deprecated */
+/* Deprecated: kept for backward compatibility. Use direct eventPool.set(...) in module code. */
 const addEventsToPool = ({ eventPool, sender, payload }) => {
-  if (sender) eventPool.set(sender.identifier, JSON.parse(JSON.stringify(payload)))
+  if (sender) eventPool.set(sender.identifier, structuredClone(payload))
 }
 
 /**
